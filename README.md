@@ -1,2 +1,1 @@
-# bachelor-s-project
-Proiect Diplomă
+# Bachelor's Project
