@@ -1,16 +1,11 @@
 #include <stdio.h>
 
 #include "aes.h"
+#include "key_expansion.h"
 
-/* TODO
-    2 - sa scap de variabilele care se trimit aiurea    DONE
-    1 - sa fac bitslice pentru cheie                    DONE
-    4 - sa fac key expansion                            
-    3 - sa fac masked                                   DONE
-*/
 
 uint32_t bitsliced_state[REGISTER_NO][CHANNELS] = {{0}};
-uint32_t bitsliced_key[(ROUNDS_NO + 1) * BLOCK_SIZE][CHANNELS]= {{0}};
+uint32_t bitsliced_key[(ROUNDS_NO + 1) * REGISTER_NO][CHANNELS]= {{0}};
 
 void convert_to_bitsliced(uint8_t *msg0, uint8_t *msg1, uint32_t bitsliced[][CHANNELS]) {
     uint8_t mask = 1;
@@ -49,20 +44,23 @@ void convert_from_bitsliced(uint32_t bitsliced[][CHANNELS], uint8_t *msg0, uint8
 
 
 int main() {
-    uint8_t m0[16] = {0},  m1[16] = {0};
+    uint8_t *key;
+    uint8_t m0[BLOCK_SIZE] = {0},  m1[BLOCK_SIZE] = {0};
 
-    for (int i = 0; i < 16; i++)
+    for (int i = 0; i < BLOCK_SIZE; i++)
         printf("%02x ", msg0[i]);
     printf("\n");
 
-    for (int i = 0; i < 16; i++)
+    for (int i = 0; i < BLOCK_SIZE; i++)
         printf("%02x ", msg1[i]);
     printf("\n");
+
+    key = expand_key(starting_key);
 
     convert_to_bitsliced(msg0, msg1, bitsliced_state);
 
     for (int i = 0; i < ROUNDS_NO + 1; i++) {
-        convert_to_bitsliced(&key[2 * i * BLOCK_SIZE], &key[2 * i * BLOCK_SIZE], &bitsliced_key[i * BLOCK_SIZE]);
+        convert_to_bitsliced(&key[i * BLOCK_SIZE], &key[i * BLOCK_SIZE], &bitsliced_key[i * REGISTER_NO]);
     }
 
 #ifndef UNMASKED
@@ -86,24 +84,15 @@ int main() {
 
     printf("\n");
 
-    for (int i = 0; i < 16; i++)
+    for (int i = 0; i < BLOCK_SIZE; i++)
         printf("%02x ", m0[i]);
     printf("\n");
 
-    for (int i = 0; i < 16; i++)
+    for (int i = 0; i < BLOCK_SIZE; i++)
         printf("%02x ", m1[i]);
     printf("\n");
 
+    free(key);
+
     return 0;
 }
-
-
-// for (int j = 0; j < REGISTER_NO; j++) {
-//     printf("%08X ", bitsliced_state[j][0]);
-// }
-// printf("\n");
-
-// for (int j = 0; j < REGISTER_NO; j++) {
-//     printf("\n%08X\t%08X", bitsliced_state[j][0], bitsliced_state[j][1]);
-// }
-// printf("\n");
