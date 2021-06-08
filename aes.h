@@ -12,3 +12,4 @@
 void encrypt(uint32_t state[][CHANNELS], uint32_t key[][CHANNELS]);
 
 #endif
+

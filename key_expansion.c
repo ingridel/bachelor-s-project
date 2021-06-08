@@ -1,17 +1,15 @@
 #include "key_expansion.h"
 
+static uint8_t expanded_key[EXPANDED_KEY_LENGTH] = {0};
 
 uint8_t *expand_key(uint8_t key[KEY_LENGTH]) {
-    uint8_t *expanded_key;
-    int rc_index;
+    uint8_t rc_index, i;
     uint8_t g0, g1, g2, g3;
 
-    expanded_key = (uint8_t *)malloc(EXPANDED_KEY_LENGTH);
-
-    for (int i = 0; i < KEY_LENGTH; i++)
+    for (i = 0; i < KEY_LENGTH; i++)
         expanded_key[i] = key[i];
 
-    for (int i = 16; i < EXPANDED_KEY_LENGTH; i += WORD_LENGTH) {
+    for (i = 16; i < EXPANDED_KEY_LENGTH; i += WORD_LENGTH) {
         if (i % KEY_LENGTH == 0) {
             rc_index = i / KEY_LENGTH - 1;
             g0 = sbox[expanded_key[i - WORD_LENGTH + 1]] ^ rc[rc_index];

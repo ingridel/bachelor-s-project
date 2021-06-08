@@ -286,7 +286,8 @@ void g256_inv(uint32_t *x7, uint32_t *x6, uint32_t *x5, uint32_t *x4,
 }
 
 void add_round_key(uint32_t state[][CHANNELS], uint32_t key[][CHANNELS]) {
-    for (int index = 0; index < REGISTER_NO; index++) {
+    uint8_t index;
+    for (index = 0; index < REGISTER_NO; index++) {
         XOR(state[index], key[index], state[index]);
     }
 }
@@ -308,10 +309,10 @@ void sub_bytes(uint32_t state[][CHANNELS]) {
 }
 
 void shift_rows(uint32_t state[][CHANNELS], bool final) {
-    uint8_t row;
+    uint8_t row, channel, index;
 
-    for (int channel = 0; channel < CHANNELS; channel++) {
-        for (int index = 0; index < REGISTER_NO; index++) {
+    for (channel = 0; channel < CHANNELS; channel++) {
+        for (index = 0; index < REGISTER_NO; index++) {
 
             // Row 1
             row = (state[index][channel] & 0x00ff0000) >> 16;
@@ -339,7 +340,7 @@ void shift_rows(uint32_t state[][CHANNELS], bool final) {
     if (final)
         return;
 
-    for (int index = 0; index < REGISTER_NO; index++) {
+    for (index = 0; index < REGISTER_NO; index++) {
         ROTATE_RIGHT_WORD(state[index], state[index], 8);
     }
 }
@@ -413,9 +414,11 @@ void mix_columns(uint32_t state[][CHANNELS]) {
 }
 
 void encrypt(uint32_t state[][CHANNELS], uint32_t key[][CHANNELS]) {
+    uint8_t i;
+
     add_round_key(state, key);
 
-    for (int i = 0; i < ROUNDS_NO - 1; i++) {
+    for (i = 0; i < ROUNDS_NO - 1; i++) {
         sub_bytes(state);
         shift_rows(state, false);
         mix_columns(state);
