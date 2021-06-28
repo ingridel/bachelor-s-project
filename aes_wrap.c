@@ -66,7 +66,7 @@ void aes_wrap() {
 
 #ifndef UNMASKED
     for (i = 0; i < REGISTER_NO; i++) {
-        bitsliced_state[i][1] = 31412;
+        bitsliced_state[i][1] = rand();
 
 		bitsliced_state[i][0] ^= bitsliced_state[i][1];
     } 
@@ -95,7 +95,7 @@ void aes_wrap() {
 }
 
 
-// int main() {
-//     aes_wrap();
-//     return 0;
-// }
+int main() {
+    aes_wrap();
+    return 0;
+}

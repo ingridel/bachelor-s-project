@@ -1,4 +1,5 @@
 #include <stdint.h>
+#include <stdlib.h>
 
 uint32_t tmp0, tmp1;
 
@@ -16,11 +17,10 @@ uint32_t tmp0, tmp1;
     res[1] = op1[1] ^ op2[1];   \
 }
 
-// TODO rand
 #define AND(op1, op2, res)	{   \
 	tmp0 = op1[0] & op2[0];   \
     tmp1 = op1[0] & op2[1];   \
-    res[0] = 1971352;   \
+    res[0] = rand();   \
     tmp0 ^= res[0];   \
     tmp0 ^= tmp1;   \
     tmp1 = op1[1] & op2[0];   \
@@ -28,11 +28,6 @@ uint32_t tmp0, tmp1;
     tmp1 = op1[1] & op2[1];   \
     tmp0 ^= tmp1;   \
     res[1] = tmp0;    \
-}
-
-#define ROTATE_LEFT_BYTE(to_rotate, res, bits) {    \
-    res[0] = (to_rotate[0] << bits) | (to_rotate[0] >> (8 - bits)); \
-    res[1] = (to_rotate[1] << bits) | (to_rotate[1] >> (8 - bits)); \
 }
 
 #define ROTATE_LEFT_WORD(to_rotate, res, bits) {    \
